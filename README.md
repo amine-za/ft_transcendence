@@ -76,6 +76,34 @@ Built with passion, it leverages Docker for seamless deployment and focuses on u
 
 ---
 
+🧑‍💻 Development Guidelines
+
+- Backend: Django with PostgreSQL
+    
+- Frontend: Vanilla JS + Bootstrap for responsive SPA, supports browser Back/Forward
+
+🔐 Security
+
+- Hashed passwords
+
+- SQL injection/XSS protection
+
+- HTTPS (WSS for WebSockets)
+
+- 2FA and JWT
+
+- Sensitive data stored in .env
+
+🧠 AI
+
+- Simulates keyboard input
+
+- Refreshes every 1 second
+
+- No A* algorithm
+
+---
+
 ## 🚀 Installation
 
 ### Clone the Repository
@@ -106,11 +134,8 @@ docker-compose up --build
 
 Access the Website
 
-    Open latest Google Chrome (or supported browser)
-
     Visit: https://localhost
 
-    Ensure no unhandled errors/warnings
 ```
 📂 Project Structure
 
@@ -125,51 +150,7 @@ ft_transcendence/
 ├── docs/                  # Documentation
 └── README.md              # This file
 
-🧑‍💻 Development Guidelines
 
-Backend: Django with PostgreSQL
-
-Frontend: Bootstrap for responsive SPA, supports browser Back/Forward
-
-🔐 Security
-
-Hashed passwords
-
-SQL injection/XSS protection
-
-HTTPS (WSS for WebSockets)
-
-2FA and JWT
-
-Sensitive data stored in .env
-
-🧠 AI
-
-    Simulates keyboard input
-
-    Refreshes every 1 second
-
-    No A* algorithm
-
-🐳 Docker
-
-Rootless on Linux
-
-No bind-mount for non-root UIDs
-
-🎓 Evaluation Tip: Justify all library/module choices; avoid feature-solving libraries.
-
-🎁 Bonus Part
-
-    Minor Module: +5 points each
-
-    Major Module: +10 points each
-    Bonuses evaluated only if mandatory part is complete
-
-
-🤝 Contributing
-
-This is a student project.
 
 Enjoy ft_transcendence! 🏓
 
