@@ -133,7 +133,6 @@ Access the Website
 
     Visit: https://localhost
 
-```
 📂 Project Structure
 
 ft_transcendence/
@@ -147,6 +146,7 @@ ft_transcendence/
 ├── docs/                  # Documentation
 └── README.md              # This file
 
+```
 
 
 Enjoy ft_transcendence! 🏓
