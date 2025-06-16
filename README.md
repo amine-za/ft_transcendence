@@ -4,9 +4,6 @@ Welcome to **ft_transcendence**, a web-based real-time multiplayer Pong contest!
 This project is a single-page application (SPA) showcasing a modern Pong platform with multiplayer tournaments, robust security, and extensible modules.  
 Built with passion, it leverages Docker for seamless deployment and focuses on user experience.  
 
-**Version:** 15  
-**Date:** June 16, 2025
-
 ---
 
 ## 📖 Project Overview
