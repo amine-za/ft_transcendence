@@ -127,21 +127,21 @@ ft_transcendence/
 
 🧑‍💻 Development Guidelines
 
-    Backend: Django with PostgreSQL
+Backend: Django with PostgreSQL
 
-    Frontend: Bootstrap for responsive SPA, supports browser Back/Forward
+Frontend: Bootstrap for responsive SPA, supports browser Back/Forward
 
 🔐 Security
 
-    Hashed passwords
+Hashed passwords
 
-    SQL injection/XSS protection
+SQL injection/XSS protection
 
-    HTTPS (WSS for WebSockets)
+HTTPS (WSS for WebSockets)
 
-    2FA and JWT
+2FA and JWT
 
-    Sensitive data stored in .env
+Sensitive data stored in .env
 
 🧠 AI
 
@@ -153,11 +153,11 @@ ft_transcendence/
 
 🐳 Docker
 
-    Rootless on Linux
+Rootless on Linux
 
-    No bind-mount for non-root UIDs
+No bind-mount for non-root UIDs
 
-    🎓 Evaluation Tip: Justify all library/module choices; avoid feature-solving libraries.
+🎓 Evaluation Tip: Justify all library/module choices; avoid feature-solving libraries.
 
 🎁 Bonus Part
 
