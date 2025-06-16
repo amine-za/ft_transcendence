@@ -111,7 +111,7 @@ Access the Website
     Visit: https://localhost
 
     Ensure no unhandled errors/warnings
-
+```
 📂 Project Structure
 
 ft_transcendence/
