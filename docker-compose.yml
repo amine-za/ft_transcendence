@@ -1,4 +1,3 @@
-version: '3.9'
 services:
   backend:
     image: backend
@@ -14,7 +13,8 @@ services:
     networks:
       - ftr
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   #######################################
 
@@ -37,16 +37,24 @@ services:
 
   db:
     container_name: postgres_db
-    build: 
-      context: .
+    image: postgres:13
     env_file:
       - .env
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - ftr
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:

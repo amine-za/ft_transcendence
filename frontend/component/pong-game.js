@@ -5,11 +5,11 @@ class PongGame extends HTMLElement {
         super();
         this.canvas = null;
         this.ctx = null;
-        this.ball = { x: 500, y: 250, radius: 10, dx: 8, dy: 8 };  // Increased from 5 to 8
+        this.ball = { x: 500, y: 250, radius: 10, dx: 8, dy: 8 };
         this.paddle1 = { x: 10, y: 200, width: 10, height: 120 };  
         this.paddle2 = { x: 980, y: 200, width: 10, height: 120 };  
         this.keys = {};
-        this.paddleSpeed = 9;  // Slightly increased from 7 to 9 to match faster ball
+        this.paddleSpeed = 9;
         this.score1 = 0;
         this.score2 = 0;
         this.player1Name = '';
@@ -43,21 +43,17 @@ class PongGame extends HTMLElement {
     }
 
     showRegistrationPopup() {
-        const username = getCookie('username') || 'Guest';
         this.innerHTML = `
-            <div class="login-container">
-                <h2 data-i18n="Player Registration"></h2>
-                <div class="form-group">
-                    <label data-i18n="First Player Name"></label>
-                    <input type="text" id="player1Name">
-                    <label data-i18n="Second Player Name"></label>
-                    <input type="text" id="player2Name">
-                </div>
-                <button class="btn" id="registerPlayers" data-i18n="Register"></button>
-            </div>
-            <div class="header">
-                <div class="content">
-                    <p class="ebtn" id="username">${username}</p>
+            <div class="game-content">
+                <div class="login-container">
+                    <h2 data-i18n="Player Registration">Player Registration</h2>
+                    <div class="form-group">
+                        <label data-i18n="First Player Name">First Player Name</label>
+                        <input type="text" id="player1Name">
+                        <label data-i18n="Second Player Name">Second Player Name</label>
+                        <input type="text" id="player2Name">
+                    </div>
+                    <button class="btn" id="registerPlayers" data-i18n="Register">Register</button>
                 </div>
             </div>
         `;
@@ -72,19 +68,16 @@ class PongGame extends HTMLElement {
         const player1Name = player1Input.value.trim();
         const player2Name = player2Input.value.trim();
         
-        // Check if either name is empty
         if (player1Name === '' || player2Name === '') {
             alert('Both players must enter a name.');
             return;
         }
     
-        // Check if the names are the same
         if (player1Name === player2Name) {
             alert('Player names must be different.');
             return;
         }
     
-        // If names are valid and different, proceed
         this.player1Name = player1Name;
         this.player2Name = player2Name;
     
@@ -93,28 +86,23 @@ class PongGame extends HTMLElement {
     
         this.showMatchmakingWindow();
     }
-    
 
     showMatchmakingWindow() {
-        const username = getCookie('username') || 'Guest';
         this.innerHTML = `
-            <div class="login-container">
-                <div class="popup">
-                    <h2 class="signup-title" data-i18n="Matchmaking"></h2>
-                    <div class="word">
-                        <span data-i18n="Player 1: "></span>
-                        <span> ${this.player1Name} </span>
+            <div class="game-content">
+                <div class="login-container">
+                    <div class="popup">
+                        <h2 class="signup-title" data-i18n="Matchmaking">Matchmaking</h2>
+                        <div class="word">
+                            <span data-i18n="Player 1: ">Player 1: </span>
+                            <span>${this.player1Name}</span>
+                        </div>
+                        <div class="word">
+                            <span data-i18n="Player 2: ">Player 2: </span>
+                            <span>${this.player2Name}</span>
+                        </div>
+                        <button class="btn" id="startGame" data-i18n="Start Game">Start Game</button>
                     </div>
-                    <div class="word">
-                        <span data-i18n="Player 2: "></span>
-                        <span> ${this.player2Name} </span>
-                    </div>
-                    <button class="btn" id="startGame" data-i18n="Start Game"></button>
-                </div>
-            </div> 
-            <div class="header">
-                <div class="content">
-                    <p class="ebtn" id="username">${username}</p>
                 </div>
             </div>
         `;
@@ -123,18 +111,14 @@ class PongGame extends HTMLElement {
     }
 
     startGame() {
-        const username = getCookie('username') || 'Guest';
         this.innerHTML = `
-            <div id="gameArea">
-                <div class="score-container" id="scoreBoard">
-                    <span class="btn" id="player1Score">${this.player1Name}: 0</span> -
-                    <span class="btn" id="player2Score">${this.player2Name}: 0</span>
-                </div>
-                <canvas id="pongCanvas" width="1000" height="500"></canvas>
-            </div>
-            <div class="header">
-                <div class="content">
-                    <p class="ebtn" id="username">${username}</p>
+            <div class="game-content">
+                <div id="gameArea">
+                    <div class="score-container" id="scoreBoard">
+                        <span class="btn" id="player1Score">${this.player1Name}: 0</span> -
+                        <span class="btn" id="player2Score">${this.player2Name}: 0</span>
+                    </div>
+                    <canvas id="pongCanvas" width="1000" height="500"></canvas>
                 </div>
             </div>
         `;
@@ -144,7 +128,6 @@ class PongGame extends HTMLElement {
         
         window.addEventListener('keydown', this.handleKeyDown.bind(this));
         window.addEventListener('keyup', this.handleKeyUp.bind(this));
-        
 
         this.gameStarted = true;
         this.gameLoop();
@@ -162,35 +145,30 @@ class PongGame extends HTMLElement {
     }
 
     update() {
-        // Move paddles
         if (this.keys['w'] && this.paddle1.y > 0) this.paddle1.y -= this.paddleSpeed;
         if (this.keys['s'] && this.paddle1.y < this.canvas.height - this.paddle1.height) this.paddle1.y += this.paddleSpeed;
         if (this.keys['ArrowUp'] && this.paddle2.y > 0) this.paddle2.y -= this.paddleSpeed;
         if (this.keys['ArrowDown'] && this.paddle2.y < this.canvas.height - this.paddle2.height) this.paddle2.y += this.paddleSpeed;
 
-        // Move ball
         this.ball.x += this.ball.dx;
         this.ball.y += this.ball.dy;
 
-        // Ball collision with top and bottom walls
         if (this.ball.y - this.ball.radius < 0) {
-            this.ball.y = this.ball.radius; // Prevent sticking to top
+            this.ball.y = this.ball.radius;
             this.ball.dy *= -1;
         } else if (this.ball.y + this.ball.radius > this.canvas.height) {
-            this.ball.y = this.canvas.height - this.ball.radius; // Prevent sticking to bottom
+            this.ball.y = this.canvas.height - this.ball.radius;
             this.ball.dy *= -1;
         }
 
-        // Check paddle collisions
         if (this.checkPaddleCollision(this.ball, this.paddle1)) {
-            this.ball.x = this.paddle1.x + this.paddle1.width + this.ball.radius; // Prevent sticking
+            this.ball.x = this.paddle1.x + this.paddle1.width + this.ball.radius;
             this.handlePaddleCollision(this.ball, this.paddle1);
         } else if (this.checkPaddleCollision(this.ball, this.paddle2)) {
-            this.ball.x = this.paddle2.x - this.ball.radius; // Prevent sticking
+            this.ball.x = this.paddle2.x - this.ball.radius;
             this.handlePaddleCollision(this.ball, this.paddle2);
         }
 
-        // Ball out of bounds
         if (this.ball.x < 0) {
             this.score2++;
             this.resetBall();
@@ -201,41 +179,33 @@ class PongGame extends HTMLElement {
 
         this.updateScoreDisplay();
 
-        // Check for winner
         if (this.score1 >= 3 || this.score2 >= 3) {
             this.showWinnerPopup();
         }
     }
 
     checkPaddleCollision(ball, paddle) {
-        // Find the closest point to the ball within the paddle
         let closestX = Math.max(paddle.x, Math.min(ball.x, paddle.x + paddle.width));
         let closestY = Math.max(paddle.y, Math.min(ball.y, paddle.y + paddle.height));
         
-        // Calculate the distance between the closest points and the ball's center
         let distanceX = ball.x - closestX;
         let distanceY = ball.y - closestY;
         
-        // Check if the distance is less than the ball's radius
         let distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
         return distanceSquared <= (ball.radius * ball.radius);
     }
 
     handlePaddleCollision(ball, paddle) {
-        // Calculate collision point relative to paddle center
         const paddleCenter = paddle.y + paddle.height / 2;
         const collisionPoint = ball.y - paddleCenter;
         const normalizedCollisionPoint = collisionPoint / (paddle.height / 2);
         
-        // Set new velocities
-        const speed = 8;  // Increased from 5 to 8
-        const maxAngle = Math.PI / 4; // 45 degrees max angle
+        const speed = 8;
+        const maxAngle = Math.PI / 4;
         const angle = normalizedCollisionPoint * maxAngle;
         
-        // Determine direction based on which paddle was hit
         const direction = (paddle === this.paddle1) ? 1 : -1;
         
-        // Update ball velocities
         ball.dx = Math.cos(angle) * speed * direction;
         ball.dy = Math.sin(angle) * speed;
     }
@@ -244,13 +214,11 @@ class PongGame extends HTMLElement {
         this.ball.x = this.canvas.width / 2;
         this.ball.y = this.canvas.height / 2;
         
-        // Reset with a random angle between -45 and 45 degrees
-        const speed = 8;  // Increased from 5 to 8
+        const speed = 8;
         const angle = (Math.random() - 0.5) * Math.PI / 4;
         this.ball.dx = Math.cos(angle) * speed * (Math.random() > 0.5 ? 1 : -1);
         this.ball.dy = Math.sin(angle) * speed;
     }
-
 
     updateScoreDisplay() {
         const player1ScoreElement = this.querySelector('#player1Score');
@@ -261,24 +229,21 @@ class PongGame extends HTMLElement {
             player2ScoreElement.textContent = `${this.player2Name}: ${this.score2}`;
         }
     }
+
     draw() {
-        // Clear the canvas
         this.ctx.fillStyle = 'black';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // Draw center line
         this.ctx.strokeStyle = 'white';
         this.ctx.beginPath();
         this.ctx.moveTo(this.canvas.width / 2, 0);
         this.ctx.lineTo(this.canvas.width / 2, this.canvas.height);
         this.ctx.stroke();
 
-        // Draw paddles
         this.ctx.fillStyle = 'white';
         this.ctx.fillRect(this.paddle1.x, this.paddle1.y, this.paddle1.width, this.paddle1.height);
         this.ctx.fillRect(this.paddle2.x, this.paddle2.y, this.paddle2.width, this.paddle2.height);
 
-        // Draw ball
         this.ctx.beginPath();
         this.ctx.arc(this.ball.x, this.ball.y, this.ball.radius, 0, Math.PI * 2);
         this.ctx.fill();
@@ -297,28 +262,22 @@ class PongGame extends HTMLElement {
         const winner = this.score1 >= 3 ? this.player1Name : this.player2Name;
         
         if (this.tournamentMode) {
-               // Remove the popstate event listener before dispatching the event
-               window.onpopstate = null;
-
-               // Dispatch event for tournament
-               window.dispatchEvent(new CustomEvent('pongGameEnd', { detail: winner }));
-               // Return to tournament view
-               window.location.hash = '#tournament';
+            window.onpopstate = null;
+            window.dispatchEvent(new CustomEvent('pongGameEnd', { detail: winner }));
+            window.location.hash = '#tournament';
         } else {
-            const username = getCookie('username') || 'Guest';
             this.innerHTML = `
-                <div class="login-container">
-                    <h2 class="login-title">Game Over</h2>
-                    <div class="word">
-                        <span>${winner}</span>
-                        <span data-i18n=" wins!"></span>
-                    </div>
-                    <button class="btn" id="restartGame" data-i18n="Play Again"></button>
-                    <button class="btn" id="returnToDashboard" data-i18n="Return to Dashboard"></button>
-                </div>            
-                <div class="header">
-                    <div class="content">
-                        <p class="ebtn" id="username">${username}</p>
+                <div class="game-content">
+                    <div class="login-container">
+                        <h2 class="login-title">Game Over</h2>
+                        <div style="margin: 20px 0;">
+                            <div class="word">
+                                <span>${winner}</span>
+                                <span data-i18n=" wins!"> wins!</span>
+                            </div>
+                        </div>
+                        <button class="btn" id="restartGame" data-i18n="Play Again" style="margin: 10px;">Play Again</button>
+                        <button class="btn" id="returnToDashboard" data-i18n="Return to Dashboard" style="margin: 10px;">Return to Dashboard</button>
                     </div>
                 </div>
             `;
@@ -329,35 +288,20 @@ class PongGame extends HTMLElement {
     }
 
     restartGame() {
-        // Reset scores
         this.score1 = 0;
         this.score2 = 0;
-    
-        // Reset the ball to its initial position
         this.resetBall();
-    
-        // Clear the game over screen and restart the game directly
         this.startGame();
     }
-    
 
     returnToDashboard() {
-        
         localStorage.removeItem('pongPlayer1Name');
         localStorage.removeItem('pongPlayer2Name');
         localStorage.removeItem('pongTournamentMode');
-        // Remove the refresh warning
-          window.onbeforeunload = null;
-
-          // Remove the popstate event listener
-          window.onpopstate = null;
-  
-          // Navigate to dashboard
-          window.location.hash = '#dashboard';
-        // Clean up localStorage
-        
+        window.onbeforeunload = null;
+        window.onpopstate = null;
+        window.location.hash = '#dashboard';
     }
-
 }
 
 customElements.define('pong-game', PongGame);

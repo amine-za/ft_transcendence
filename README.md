@@ -1,53 +1,30 @@
-# ft_transcendence 🎮
+# ft_transcendence
 
-Welcome to **ft_transcendence**, a web-based real-time multiplayer Pong contest!  
-This project is a single-page application (SPA) showcasing a modern Pong platform with multiplayer tournaments, robust security, and extensible modules.  
-Built with passion, it leverages Docker for seamless deployment and focuses on user experience.  
+A web-based multiplayer Pong game. Frontend uses HTML, CSS, and JavaScript. Backend uses Django REST API. The app runs in Docker containers with PostgreSQL database.
 
----
+### Screenshots
+<p align="center">
+    <img src="images/Deployment_diagram.png" width="32%" alt="Deployment Diagram" />
+    <img src="images/Main_page.jpg" width="32%" alt="Main Page" />
+    <img src="images/Login_page.jpg" width="32%" alt="Login Page" />
+</p>
+<p align="center">
+    <img src="images/Multiplayer.jpg" width="32%" alt="Multiplayer Game" />
+    <img src="images/AI_mode.jpg" width="32%" alt="AI Mode" />
+    <img src="images/Terminal_interface.jpg" width="32%" alt="Terminal Interface" />
+</p>
 
-## 📖 Project Overview
+## Features
 
-**ft_transcendence** is a feature-rich website where users can:
-
-- Play real-time Pong with local or remote players.
-- Join automated multiplayer tournaments with alias-based registration.
-- Enjoy a secure, user-friendly SPA built with **Bootstrap** (frontend) and **Django** (backend).
-
----
-
-## ✨ Features
-
-- **Core Game**: Real-time multiplayer Pong, supporting local and remote players.
-- **Tournament System**: Automated matchmaking with alias-based registration.
-- **Single-Page Application**: Responsive SPA compatible with latest Google Chrome and one additional browser.
-
-### 🔐 Security
-- Hashed passwords
+- Real-time multiplayer Pong game
+- Play against AI or other players
+- Tournament system with automated matchmaking
+- Single-page application with smooth navigation
 - Two-Factor Authentication (2FA)
-- JWT (JSON Web Tokens)
-- Protection against SQL injection and XSS
-
-### 🕹️ Multiplayer Enhancements
-- Supports >2 players (e.g., 4-player squared board)
-
-### 🤖 AI Opponent
-- Simulates keyboard input
-- Refreshes 1/sec
-- Uses power-ups
-- Can win matches
-
-### 🎨 Customization
-- Power-ups, maps, with a default basic mode
-
-### 🌐 Accessibility
-- Multi-language support (3+ languages)
-- Extended browser compatibility
-
-### 🛢️ Database
-- PostgreSQL for robust data management
-
-### 📦 Deployment
+- JWT authentication
+- Multi-language support
+- PostgreSQL database
+- Docker deployment
 - Dockerized
 - Runs with `docker-compose up --build` in rootless mode on Linux
 
@@ -71,82 +48,85 @@ Built with passion, it leverages Docker for seamless deployment and focuses on u
 - **Game Customization**: Power-ups, attacks, maps with user-friendly settings.
 - **Multiple Language Support**: 3+ languages with a language switcher.
 
----
+## Installation
 
-🧑‍💻 Development Guidelines
+### Requirements
 
-- Backend: Django with PostgreSQL
-    
-- Frontend: Vanilla JS + Bootstrap for responsive SPA, supports browser Back/Forward
+- Docker
+- Docker Compose
+- Make (optional, for easier commands)
 
-🔐 Security
+### Quick Start (Basic Mode)
 
-- Hashed passwords
+This runs the app without email features. Good for testing.
 
-- SQL injection/XSS protection
-
-- HTTPS (WSS for WebSockets)
-
-- 2FA and JWT
-
-- Sensitive data stored in .env
-
-🧠 AI
-
-- Simulates keyboard input
-
-- Refreshes every 1 second
-
-- No A* algorithm
-
----
-
-## 🚀 Installation
-
-### Clone the Repository
+1. Clone the repository:
 ```bash
-git clone https://github.com/your-username/ft_transcendence.git
+git clone https://github.com/amine-za/ft_transcendence.git
 cd ft_transcendence
+```
 
-Set Up Environment
+2. Run with Make:
+```bash
+make up
+```
 
-Create a .env file in the root (ignored by Git):
-
-DB_HOST=localhost
-DB_USER=your_user
-DB_PASS=your_password
-SECRET_KEY=your_secret_key
-OAUTH_CLIENT_ID=your_42_client_id
-OAUTH_CLIENT_SECRET=your_42_client_secret
-
-Run with Docker
-
-    Ensure Docker and Docker Compose are installed.
-
-    Build and run:
-
+Or without Make:
+```bash
+cp .env.example .env
 docker-compose up --build
+```
 
-    💡 On Linux clusters, use rootless Docker with runtime files in /goinfre or /sgoinfre.
+3. Open your browser and go to: https://localhost:443
 
-Access the Website
+Note: You will see a security warning because of the self-signed certificate. Click "Advanced" and "Proceed to localhost" to continue.
 
-    Visit: https://localhost
+### Full Setup (With Email 2FA)
 
-📂 Project Structure
+If you want Two-Factor Authentication via email to work:
 
-ft_transcendence/
-├── docker-compose.yml     # Docker Compose config
-├── .env                   # Environment variables (ignored)
-├── src/                   # Source code
-│   ├── backend/           # Django backend
-│   ├── frontend/          # Bootstrap frontend
-│   ├── database/          # PostgreSQL configs
-│   └── game/              # Pong game logic & AI
-├── docs/                  # Documentation
-└── README.md              # This file
+1. After running `make up`, edit the `.env` file:
+```bash
+EMAIL_HOST_USER=your_gmail@gmail.com
+EMAIL_HOST_PASSWORD=your_gmail_app_password
+```
+
+2. Get a Gmail App Password:
+   - Go to your Google Account settings
+   - Enable 2-Step Verification
+   - Generate an App Password for "Mail"
+   - Use that password in `.env`
+
+3. Restart the containers:
+```bash
+make re
+```
+
+## Project Structure
 
 ```
+ft_transcendence/
+├── docker-compose.yml     # Docker setup
+├── backend/               # Django API
+├── frontend/              # HTML/CSS/JS files
+└── images/                # Screenshots
+```
+
+## Technology Stack
+
+- Frontend: HTML, CSS, JavaScript
+- Backend: Django, Django REST Framework
+- Database: PostgreSQL
+- Deployment: Docker, Nginx
+- Authentication: JWT, OAuth 2.0
+
+## Security Features
+
+- Password hashing
+- Two-Factor Authentication
+- JWT tokens
+- Protection against SQL injection and XSS
+- HTTPS support
 
 
 Enjoy ft_transcendence! 🏓

@@ -23,16 +23,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
 
-ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1"]
+# ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1"]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'tendance1337@gmail.com'
-EMAIL_HOST_PASSWORD = 'rduw nbim zwey uuab'
+# EMAIL_HOST_USER = 'tendance1337@gmail.com'
+# EMAIL_HOST_PASSWORD = 'rduw nbim zwey uuab'
+
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+
+ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0', 'localhost']
+
 
 
 # Application definition
@@ -70,9 +78,29 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "https://127.0.0.1",
     "https://0.0.0.0",
+    "https://127.0.0.1",
+    "https://localhost",
     "https://localhost:443",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://localhost",
+    "https://127.0.0.1",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
 ]
 
 ROOT_URLCONF = 'main.urls'
@@ -123,11 +151,11 @@ SIMPLE_JWT = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get("POSTGRES_NAME"),
-        'USER': os.environ.get("POSTGRES_USER"), 
-        'PASSWORD': os.environ.get("POSTGRES_PASSWORD"),
-        'HOST': 'db',
-        'PORT': '5432',
+        'NAME': os.environ['DB_NAME'],
+        'USER': os.environ['DB_USER'],
+        'PASSWORD': os.environ['DB_PASSWORD'],
+        'HOST': os.environ['DB_HOST'],
+        'PORT': 5432,
     }
 }
 

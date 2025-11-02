@@ -10,7 +10,7 @@ let access = getCookie('access');
 export async function CheckAuthenticated()
 {
     console.log('Checking authentication...');
-    const res = await fetch('https://0.0.0.0:8000/check/',
+    const res = await fetch('/check/',
     {
         method: 'GET',
         headers: {
@@ -20,14 +20,13 @@ export async function CheckAuthenticated()
     });
     if (res.status === 401)
     {
-        const res = await fetch('https://0.0.0.0:8000/token-refresh/', {
-            method :"POST",
-            mode:"cors",
+        const res = await fetch('/token-refresh/', {
+            method: "POST",
             headers:
             {
                 'Content-Type': 'application/json',
             },
-            "body" : JSON.stringify
+            body: JSON.stringify
             ({
                 refresh: getCookie('refresh'),
             })
@@ -60,5 +59,5 @@ export async function CheckAuthenticated()
 }
 
 export function deleteCookie(name) {
-    document.cookie = `${name}=; expires=Thu, 20 Sep 2001 00:00:00 UTC; path=/;`;
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 }

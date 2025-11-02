@@ -1,5 +1,6 @@
 import { changeLanguage } from "../assets/js/script.js";
 import { getCookie} from "./func.js";
+
 class PongTournament extends HTMLElement {
     constructor() {
         super();
@@ -18,29 +19,25 @@ class PongTournament extends HTMLElement {
     }
 
     showParticipantCountForm() {
-        const username = getCookie('username') || 'Guest';
         this.innerHTML = `
-        <style>
-            label {
-                font-size: 1.2em;
-                margin-bottom: 5px;
-                display: inline;
-            }
-        </style>
-
-        <div class="login-container">
-            <h2 data-i18n="Pong Tournament Setup"></h2>
-            <form id="participantCountForm">
-                <label for="participantCount" data-i18n="Number of Participants"></label>
-                <input type="number" id="participantCount" min="2" max="8" required>
-                <button class="btn" id="registerPlayers" type="submit" data-i18n="Next"></button>
-            </form>
-        </div>
-        <div class="header">
-        <div class="content">
-            <button class="ebtn" id="username">${username}</button>
-
-    `;
+            <style>
+                label {
+                    font-size: 1.2em;
+                    margin-bottom: 5px;
+                    display: inline;
+                }
+            </style>
+            <div class="game-content">
+                <div class="login-container">
+                    <h2 data-i18n="Pong Tournament Setup">Pong Tournament Setup</h2>
+                    <form id="participantCountForm">
+                        <label for="participantCount" data-i18n="Number of Participants">Number of Participants</label>
+                        <input type="number" id="participantCount" min="2" max="8" required>
+                        <button class="btn" id="registerPlayers" type="submit" data-i18n="Next">Next</button>
+                    </form>
+                </div>
+            </div>
+        `;
         changeLanguage(localStorage.getItem('preferredLanguage') || 'en');
         this.querySelector('#participantCountForm').addEventListener('submit', (e) => {
             e.preventDefault();
@@ -50,22 +47,20 @@ class PongTournament extends HTMLElement {
     }
 
     showRegistrationForm(count) {
-        const username = getCookie('username') || 'Guest';
         let inputs = '';
         for (let i = 1; i <= count; i++) {
             inputs += `<input type="text" id="player${i}" placeholder="Player ${i} Name" required><br>`;
         }
         this.innerHTML = `
-            <div class="tournament-container">
-                <h2 data-i18n="Player Registration"></h2>
-                <form id="registrationForm">
-                    ${inputs}
-                    <button class="btn" id="registerPlayers" type="submit" data-i18n="Start Tournament"></button>
-                </form>
+            <div class="game-content">
+                <div class="tournament-container">
+                    <h2 data-i18n="Player Registration">Player Registration</h2>
+                    <form id="registrationForm">
+                        ${inputs}
+                        <button class="btn" id="registerPlayers" type="submit" data-i18n="Start Tournament">Start Tournament</button>
+                    </form>
+                </div>
             </div>
-        <div class="header">
-        <div class="content">
-            <button class="ebtn" id="username">${username}</button>
         `;
         changeLanguage(localStorage.getItem('preferredLanguage') || 'en');
         this.querySelector('#registrationForm').addEventListener('submit', (e) => {
@@ -90,7 +85,7 @@ class PongTournament extends HTMLElement {
             if (i + 1 < shuffled.length) {
                 bracket.push([shuffled[i], shuffled[i + 1]]);
             } else {
-                bracket.push([shuffled[i]]); // Single player advances automatically
+                bracket.push([shuffled[i]]);
             }
         }
         return bracket;
@@ -98,23 +93,18 @@ class PongTournament extends HTMLElement {
 
     playNextMatch() {
         if (this.brackets[this.currentRound].every(match => match.length === 1)) {
-            // All matches in this round are complete
             if (this.brackets[this.currentRound].length === 1) {
-                // Tournament is over
                 this.declareTournamentWinner(this.brackets[this.currentRound][0][0]);
                 return;
             }
-            // Prepare next round
             this.currentRound++;
             this.brackets[this.currentRound] = this.createNextRoundBracket(this.brackets[this.currentRound - 1]);
         }
       
-        // Find next match to play
         this.currentMatch = this.brackets[this.currentRound].find(match => match.length === 2);
         if (this.currentMatch) {
             this.showMatchmaking(this.currentMatch[0], this.currentMatch[1]);
         } else {
-            // No more matches in this round, should move to next round
             this.playNextMatch();
         }
     }
@@ -126,16 +116,14 @@ class PongTournament extends HTMLElement {
             if (i + 1 < winners.length) {
                 nextRound.push([winners[i], winners[i + 1]]);
             } else {
-                nextRound.push([winners[i]]); // Odd player out
+                nextRound.push([winners[i]]);
             }
         }
         return nextRound;
     }
 
     showMatchmaking(player1, player2) {
-        // Retrieve the previous match winner from localStorage
         const previousWinner = localStorage.getItem('previousWinner');
-        const username = getCookie('username') || 'Guest';
         this.innerHTML = `
             <style>
                 .form-group p {
@@ -152,117 +140,108 @@ class PongTournament extends HTMLElement {
                     font-size: 1.5em;
                     font-weight: bold;
                     text-align: center;
-                    color: #ffd700; /* Golden color for the winner */
-                    background: rgba(50, 50, 50, 0.8); /* Darker semi-transparent background */
+                    color: #ffd700;
+                    background: rgba(50, 50, 50, 0.8);
                     padding: 10px;
-                    border: 2px solid #ffd700; /* Golden border */
+                    border: 2px solid #ffd700;
                     border-radius: 8px;
                     margin-top: 15px;
-                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Subtle shadow for a lifted effect */
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
                 }
             </style>
-    
-            <div class="login-container">
-                <h2 data-i18n="Next Match"></h2>
-                <div class="form-group">
-                    <p>${player1} vs ${player2}</p>
-                    ${previousWinner ? `<div class="previous-winner">
-                    <span data-i18n="Last Winner: "></span>
-                    <span> ${previousWinner} </span> </div>` : ''}
+            <div class="game-content">
+                <div class="login-container">
+                    <h2 data-i18n="Next Match">Next Match</h2>
+                    <div class="form-group">
+                        <p>${player1} vs ${player2}</p>
+                        ${previousWinner ? `<div class="previous-winner">
+                        <span data-i18n="Last Winner: ">Last Winner: </span>
+                        <span>${previousWinner}</span></div>` : ''}
+                    </div>
+                    <button class="btn" id="startMatch" data-i18n="Start Match">Start Match</button>
                 </div>
-                <button class="btn" id="startMatch" data-i18n="Start Match"></button>
             </div>
-            <div class="header">
-            <div class="content">
-            <button class="ebtn" id="username">${username}</button>
         `;
         changeLanguage(localStorage.getItem('preferredLanguage') || 'en');
         this.querySelector('#startMatch').addEventListener('click', () => this.startMatch(player1, player2));
     }
-    
-    
 
     startMatch(player1, player2) {
-        // Ensure we're passing string values
         localStorage.setItem('pongPlayer1Name', String(player1));
         localStorage.setItem('pongPlayer2Name', String(player2));
         localStorage.setItem('pongTournamentMode', 'true');
         window.location.hash = '#pong';
 
-        // Listen for the game end event
         window.addEventListener('pongGameEnd', this.onMatchEnd.bind(this), { once: true });
     }
 
     onMatchEnd(event) {
         const winner = event.detail;
     
-        // Store the winner's name in localStorage for the next match display
         localStorage.setItem('previousWinner', winner);
     
-        // Update the current bracket with the winner
         this.brackets[this.currentRound] = this.brackets[this.currentRound].map(match => 
             match.includes(this.currentMatch[0]) || match.includes(this.currentMatch[1]) ? [winner] : match
         );
-        this.currentMatch = null; // Clear the current match
+        this.currentMatch = null;
         this.saveTournamentState();
         this.showMatchResult(winner);
     }
-    
 
     showMatchResult(winner) {
         this.innerHTML = `
-            <h2 data-i18n="Match Result"></h2>
-            <span> ${winner}</span>
-            <span data-i18n=" wins the match!"></span><br>
-            <button id="nextMatch" data-i18n="Next Match"></button>
+            <div class="game-content">
+                <div class="login-container">
+                    <h2 data-i18n="Match Result">Match Result</h2>
+                    <span class="word">${winner}</span>
+                    <span class="word" data-i18n=" wins the match!"> wins the match!</span><br>
+                    <button class="btn" id="nextMatch" data-i18n="Next Match">Next Match</button>
+                </div>
+            </div>
         `;
         changeLanguage(localStorage.getItem('preferredLanguage') || 'en');
         this.querySelector('#nextMatch').addEventListener('click', () => this.playNextMatch());
     }
 
     declareTournamentWinner(winner) {
-        const username = getCookie('username') || 'Guest';
         this.innerHTML = `
-        <style>
-            .login-container {
-                text-align: center;
-                background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-                padding: 20px;
-                border-radius: 10px;
-                max-width: 400px;
-                margin: 0 auto;
-                margin-top: 150px;
-            }
+            <style>
+                .login-container {
+                    text-align: center;
+                    background: rgba(0, 0, 0, 0.7);
+                    padding: 40px;
+                    border-radius: 10px;
+                    max-width: 500px;
+                }
 
-            .login-container h2 {
-                font-size: 1.8em;
-                margin-bottom: 15px;
-                color: #ffffff; /* White for good contrast */
-            }
+                .login-container h2 {
+                    font-size: 2em;
+                    margin-bottom: 20px;
+                    color: #ffffff;
+                }
 
-            .login-container .word {
-                font-size: 1.4em;
-                font-weight: bold;
-                color: #ffffff;
-                margin: 10px 0;
-                background: rgba(255, 255, 255, 0.1); /* Slightly lighter background to highlight */
-                padding: 10px;
-                border-radius: 5px;
-            }    
-        </style>
-
-        <div class="login-container">
-            <h2 class="login-title" data-i18n="Tournament Ended"></h2>
-            <span class="word"> ${winner} </span>
-            <span class="word" data-i18n=" is the tournament champion!"></span><br>
-            <button class="btn" id="newTournament" data-i18n="Start New Tournament"></button>
-            <button class="btn" id="returnToDashboard" data-i18n="Return to Dashboard"></button>
-        </div>
-        <div class="header">
-        <div class="content">
-            <button class="ebtn" id="username">${username}</button>
-    `;
-    changeLanguage(localStorage.getItem('preferredLanguage') || 'en');
+                .login-container .word {
+                    font-size: 1.6em;
+                    font-weight: bold;
+                    color: #ffd700;
+                    margin: 10px 0;
+                    background: rgba(255, 255, 255, 0.1);
+                    padding: 15px;
+                    border-radius: 8px;
+                    display: inline-block;
+                }    
+            </style>
+            <div class="game-content">
+                <div class="login-container">
+                    <h2 class="login-title" data-i18n="Tournament Ended">Tournament Ended</h2>
+                    <div class="word">${winner}</div>
+                    <div class="word" data-i18n=" is the tournament champion!"> is the tournament champion!</div>
+                    <button class="btn" id="newTournament" data-i18n="Start New Tournament">Start New Tournament</button>
+                    <button class="btn" id="returnToDashboard" data-i18n="Return to Dashboard">Return to Dashboard</button>
+                </div>
+            </div>
+        `;
+        changeLanguage(localStorage.getItem('preferredLanguage') || 'en');
         this.querySelector('#newTournament').addEventListener('click', () => {
             this.clearTournamentState();
             this.showParticipantCountForm();
@@ -298,8 +277,7 @@ class PongTournament extends HTMLElement {
         localStorage.removeItem('pongTournamentMode');
         localStorage.removeItem('pongPlayer1Name');
         localStorage.removeItem('pongPlayer2Name');
-        localStorage.removeItem('previousWinner');  // Clear the winner data
-
+        localStorage.removeItem('previousWinner');
     }
 
     showCurrentState() {
