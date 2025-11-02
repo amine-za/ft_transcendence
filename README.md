@@ -30,9 +30,9 @@ A web-based multiplayer Pong game. Frontend uses HTML, CSS, and JavaScript. Back
 
 ---
 
-## 🛠️ Chosen Modules
+##  Chosen Modules
 
-### 🧩 Major Modules
+###  Major Modules
 
 - **Framework Backend (Django)**: Scalable server-side solution.
 - **Remote Authentication (OAuth 2.0 with 42)**: Secure login via 42’s OAuth 2.0.
@@ -40,7 +40,7 @@ A web-based multiplayer Pong game. Frontend uses HTML, CSS, and JavaScript. Back
 - **Multiple Players**: >2 players in a single game (e.g., 4-player squared board).
 - **AI Opponent**: Simulates human play, uses power-ups (no A* algorithm).
 
-### 🧱 Minor Modules
+###  Minor Modules
 
 - **Database (PostgreSQL)**: Reliable data storage.
 - **Front-End Framework (Bootstrap)**: Responsive UI.
@@ -129,5 +129,5 @@ ft_transcendence/
 - HTTPS support
 
 
-Enjoy ft_transcendence! 🏓
+Enjoy ft_transcendence
 
