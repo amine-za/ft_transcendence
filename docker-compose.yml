@@ -15,8 +15,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
-
-  #######################################
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket; socket.create_connection(('localhost', 8000), timeout=1)"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
   frontend:
     image: frontend
@@ -31,9 +35,14 @@ services:
     networks:
       - ftr
     depends_on:
-      - backend
-
-  #######################################
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f -k https://localhost:443 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
 
   db:
     container_name: postgres_db
