@@ -8,22 +8,21 @@ class dashboard extends HTMLElement
     async connectedCallback()
     {
         const username = getCookie('username') || 'Guest';
+        const accessToken = getCookie('access');
 
         const res = await fetch("/get2fa/",
         {
-            method: "POST",
+            method: "GET",
             headers: {
                 'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                username: username
-            })
+                'Authorization': `Bearer ${accessToken}`
+            }
         })
         const fda = await res.json();
         let fa = false;
-        if (fda.fact === "t")
+        if (fda.two_factor_enabled === true)
             fa = true;
-        console.log("2fa = ", fa, fda.fact);
+        console.log("2fa = ", fa, fda.two_factor_enabled);
 
         this.innerHTML = `
             <!-- Navbar -->
@@ -111,13 +110,14 @@ class dashboard extends HTMLElement
             element.addEventListener('click', async function(event) {
                 event.preventDefault();
                 
+                const accessToken = getCookie('access');
                 const res = await fetch("/lang/", {
                     method: "PUT",
                     headers: {
                         'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`
                     },
                     body: JSON.stringify({
-                        username: username,
                         language: code
                     })
                 });
@@ -137,17 +137,17 @@ class dashboard extends HTMLElement
             event.preventDefault();
             fa = !fa;
 
-            let c = fa ? "t" : "f";
             faButton.innerHTML = fa ? '2FA Enabled' : '2FA Disabled';
 
+            const accessToken = getCookie('access');
             const res = await fetch("/set2fa/", {
                 method: "PUT",
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`
                 },
                 body: JSON.stringify({
-                    username: username,
-                    fact: c
+                    two_factor_enabled: fa
                 })
             });
         });

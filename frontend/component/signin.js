@@ -44,28 +44,7 @@ class signin extends HTMLElement{
                 return;
             }
 
-            const resp = await fetch("/get2fa/",
-            {
-                method: "POST",
-                headers:
-                {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify
-                ({
-                    username: user.value,
-                })
-            });
-            const fda = await resp.json();
-            let fa = false;
-            if (fda.fact === "t")
-                fa = true;
-            console.log("2fa = ", fa, fda.fact);
-            
-            let url = fa ? "/login2fa/" : "/login/";
-            let page = fa ? "#verify" : "#dashboard";
-
-            const res = await fetch(url, 
+            const res = await fetch("/login/", 
             {
                 method: "POST",
                 headers:
@@ -78,18 +57,25 @@ class signin extends HTMLElement{
                     password: pass.value,
                 })
             });
+            
             if (res.ok) 
             {
                 const data = await res.json();
                 document.cookie = `username=${user.value}; path=/; SameSite=None; Secure`;
-                if (!fa)
+                
+                if (data.requires_2fa) 
+                {
+                    changeLanguage(data.language || 'en');
+                    window.location.hash = "#verify";
+                } 
+                else 
                 {
                     document.cookie = `refresh=${data.refresh}; path=/; SameSite=None; Secure`;
                     document.cookie = `access=${data.access}; path=/; SameSite=None; Secure`;
                     document.cookie = `language=${data.language}; path=/; Secure; SameSite=Lax`;
+                    changeLanguage(data.language);
+                    window.location.hash = "#dashboard";
                 }
-                changeLanguage(data.language);
-                window.location.hash = page;
             } 
             else 
             {

@@ -10,6 +10,6 @@ urlpatterns = [
     path('token-refresh/', TokenRefreshView.as_view(), name='token-refresh'),
     path('check/', views.check_token),
     path('lang/', views.lang),
-    path('set2fa/', views.setfact),
-    path('get2fa/', views.getfact),
+    path('set2fa/', views.set_2fa_status),
+    path('get2fa/', views.get_2fa_status),
 ]

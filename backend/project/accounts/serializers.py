@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
+from .models import User
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)
     username = serializers.CharField(required=True)
     class Meta(object):
         model = User
-        fields = ['id', 'username', 'password', 'email', 'first_name', 'last_name']
+        fields = ['id', 'username', 'password', 'email', 'language', 'two_factor_enabled']
 
     def validate_email(self, value):
         if User.objects.filter(email=value).exists():
@@ -22,8 +22,8 @@ class UserSerializer(serializers.ModelSerializer):
         user = User(
             username=validated_data['username'],
             email=validated_data['email'],
-            first_name="en",
-            last_name="f"
+            language="en",
+            two_factor_enabled=False
         )
         user.set_password(validated_data['password']) 
         user.save()

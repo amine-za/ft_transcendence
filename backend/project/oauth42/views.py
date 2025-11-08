@@ -1,7 +1,7 @@
 import os
 from django.shortcuts import redirect
 from django.http import HttpRequest, HttpResponse, JsonResponse
-from django.contrib.auth.models import User
+from accounts.models import User
 import requests
 
 from rest_framework.decorators import api_view, permission_classes
@@ -73,8 +73,8 @@ def login42_redir(request):
             username=username,
             defaults={
                 'email': user_info.get('email'),
-                'first_name': "en",
-                'last_name': "f",
+                'language': "en",
+                'two_factore_status': False
             }
         )
 
@@ -83,7 +83,7 @@ def login42_redir(request):
         else:
             print(f"User {username} already exists.")
         
-        if user.last_name == "f":
+        if not user.two_factor_enabled:
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
             refresh_token = str(refresh)
@@ -92,30 +92,30 @@ def login42_redir(request):
                 "access": str(refresh.access_token),
                 "refresh": str(refresh),
                 "username": user.username,
-                "language": user.first_name,
-                "2fa": user.last_name
+                "language": user.language,
+                "2fa": user.two_factor_enabled
             }, status=302)
 
             response.set_cookie(key='access', value=access_token)
             response.set_cookie(key='refresh', value=refresh_token)
             response.set_cookie(key='username', value=username)
-            response.set_cookie(key='language', value=User.objects.get(username=username).first_name)
+            response.set_cookie(key='language', value=User.objects.get(username=username).language)
 
             response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
             response['Pragma'] = 'no-cache'
             response['Location'] = "https://127.0.0.1/#dashboard"
 
-        elif user.last_name == "t":
+        elif user.two_factor_enabled:
             send_otp(username)
 
             response =  Response({
                 "username": user.username,
-                "language": user.first_name,
-                "2fa": user.last_name
+                "language": user.language,
+                "2fa": user.two_factor_enabled
             }, status=302)
 
             response.set_cookie(key='username', value=username)
-            response.set_cookie(key='language', value=User.objects.get(username=username).first_name)
+            response.set_cookie(key='language', value=User.objects.get(username=username).language)
             response['Location'] = "https://127.0.0.1/#verify"
 
         return response

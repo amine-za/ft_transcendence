@@ -7,8 +7,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 ################################################
 
 from .serializers import UserSerializer
+from .models import User
 from rest_framework import status
-from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 
 def set_token_cookies(response, refresh_token, access_token):
@@ -30,13 +30,25 @@ def login(req):
     user = get_object_or_404(User, username=req.data['username'])
     if not user.check_password(req.data['password']):
         return Response({"detail": "Wrong Password !"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+    
+    # Check if user has 2FA enabled
+    if user.two_factor_enabled:
+        # Password is correct, send OTP and wait for verification
+        from twofa.views import send_otp
+        send_otp(username=req.data['username'])
+        return Response({
+            "requires_2fa": True,
+            "message": "Verification code sent to your email"
+        }, status=status.HTTP_200_OK)
+    
+    # No 2FA - proceed with normal login
     serializer = UserSerializer(instance=user)
     refresh = RefreshToken.for_user(user)
-    response =  Response({
+    response = Response({
         "access": str(refresh.access_token),
         "refresh": str(refresh),
-        "language": user.first_name,
-        "2fa": user.last_name
+        "language": user.language,
+        "requires_2fa": False
     }, status=status.HTTP_200_OK)
     set_token_cookies(response, str(refresh), str(refresh.access_token))
     return response
@@ -51,8 +63,8 @@ def signup(req):
     if serializer.is_valid():
         serializer.save()
         user = User.objects.get(username=req.data['username'])
-        user.first_name = "en"
-        user.last_name = "f"
+        user.language = "en"
+        user.two_factor_enabled = False  # User can enable 2FA later
         user.set_password(req.data['password'])
         user.save()
         return Response({"user": serializer.data})
@@ -81,37 +93,43 @@ def check_token(req):
     return Response({"detail": "You are authenticated !"}, status=status.HTTP_200_OK)
 
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated])
 def lang(req):
-    user = get_object_or_404(User, username=req.data['username'])
-    new_first_name = req.data.get('language')
+    # Get authenticated user from JWT token
+    user = req.user
+    updated_language = req.data.get('language')
 
-    if not new_first_name:
+    if not updated_language:
         return Response({"error": "language is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-    user.first_name = new_first_name
+    user.language = updated_language
     user.save()
-    response = Response({"message": "language updated successfully", "first_name": user.first_name})
+    response = Response({"message": "language updated successfully", "language": user.language})
     response.set_cookie(
         key='language',
-        value=new_first_name,
+        value=updated_language,
         samesite='None',
     )
     return response
 
 @api_view(['PUT'])
-def setfact(req):
-    user = get_object_or_404(User, username=req.data['username'])
-    new_value = req.data.get('fact')
+@permission_classes([IsAuthenticated])
+def set_2fa_status(req):
+    # Get authenticated user from JWT token
+    user = req.user
+    new_value = req.data.get('two_factor_enabled')
 
-    if not new_value:
-        return Response({"error": "value is required"}, status=status.HTTP_400_BAD_REQUEST)
+    if new_value is None:
+        return Response({"error": "two_factor_enabled is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-    user.last_name = new_value
+    user.two_factor_enabled = new_value
     user.save()
-    response = Response({"message": "value updated successfully", "fact": user.last_name})
+    response = Response({"message": "value updated successfully", "two_factor_enabled": user.two_factor_enabled})
     return response
 
-@api_view(['POST'])
-def getfact(req):
-    user = get_object_or_404(User, username=req.data['username'])
-    return Response({"fact": user.last_name})
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_2fa_status(req):
+    # Get authenticated user from JWT token
+    user = req.user
+    return Response({"two_factor_enabled": user.two_factor_enabled}, status=status.HTTP_200_OK)

@@ -9,7 +9,7 @@ from accounts.serializers import UserSerializer
 from accounts.views import set_token_cookies
 
 from rest_framework import status
-from django.contrib.auth.models import User
+from accounts.models import User
 from django.shortcuts import get_object_or_404
 
 from django.dispatch import receiver
@@ -93,8 +93,8 @@ def confirm_account(request):
                 "access": str(refresh.access_token),
                 "refresh": str(refresh),
                 "username": user.username,
-                "language": user.first_name,
-                "2fa": user.last_name
+                "language": user.language,
+                "2fa": user.two_factor_enabled
             }, status=status.HTTP_200_OK)
             set_token_cookies(response, str(refresh), str(refresh.access_token))
 

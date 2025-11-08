@@ -63,6 +63,9 @@ INSTALLED_APPS = [
     'twofa',
 ]
 
+# Custom User Model
+AUTH_USER_MODEL = 'accounts.User'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -156,8 +159,21 @@ DATABASES = {
         'PASSWORD': os.environ['DB_PASSWORD'],
         'HOST': os.environ['DB_HOST'],
         'PORT': 5432,
+        'TEST': {
+            'NAME': 'test_' + os.environ.get('DB_NAME', 'testdb'),
+        }
     }
 }
+
+# Use SQLite for testing to avoid permission issues
+import sys
+if 'test' in sys.argv:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'test_db.sqlite3',
+        }
+    }
 
 
 # Password validation
