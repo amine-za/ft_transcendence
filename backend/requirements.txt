@@ -1,9 +1,8 @@
-django==3.2.7
-django-rest-framework
-djangorestframework-simplejwt
-django-cors-headers
+django==4.2.16
+djangorestframework==3.15.2
+djangorestframework-simplejwt==5.3.1
+django-cors-headers==4.4.0
 psycopg2-binary>=2.9.0
 requests
 django-sslserver
-nc
-pytest-django
+pytest-django==4.9.0

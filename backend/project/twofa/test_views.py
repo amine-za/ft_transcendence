@@ -54,6 +54,8 @@ class TestTwoFactorAuth:
         assert response.status_code == 200
         assert 'access' in response.data
         assert 'refresh' in response.data
+        assert len(response.data['access']) > 0
+        assert len(response.data['refresh']) > 0
         # OTP should be deleted after successful verification
         assert not OtpToken.objects.filter(user=test_user).exists()
 
@@ -72,7 +74,7 @@ class TestTwoFactorAuth:
         })
         
         assert response.status_code == 400
-        assert 'invalide' in response.data['detail']
+        assert response.data['detail'] == 'code is invalide'
 
     def test_confirm_with_expired_otp(self, api_client, test_user):
         """Test confirming with expired OTP"""
@@ -89,4 +91,4 @@ class TestTwoFactorAuth:
         })
         
         assert response.status_code == 400
-        assert 'expired' in response.data['detail']
+        assert response.data['detail'] == 'code has been expired'

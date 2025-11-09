@@ -74,7 +74,7 @@ def login42_redir(request):
             defaults={
                 'email': user_info.get('email'),
                 'language': "en",
-                'two_factore_status': False
+                'two_factor_enabled': False
             }
         )
 

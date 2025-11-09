@@ -8,7 +8,7 @@ class dashboard extends HTMLElement
     async connectedCallback()
     {
         const username = getCookie('username') || 'Guest';
-        const accessToken = getCookie('access');
+        const accessToken = getCookie('access_token');
 
         const res = await fetch("/get2fa/",
         {
@@ -110,7 +110,7 @@ class dashboard extends HTMLElement
             element.addEventListener('click', async function(event) {
                 event.preventDefault();
                 
-                const accessToken = getCookie('access');
+                const accessToken = getCookie('access_token');
                 const res = await fetch("/lang/", {
                     method: "PUT",
                     headers: {
@@ -139,7 +139,7 @@ class dashboard extends HTMLElement
 
             faButton.innerHTML = fa ? '2FA Enabled' : '2FA Disabled';
 
-            const accessToken = getCookie('access');
+            const accessToken = getCookie('access_token');
             const res = await fetch("/set2fa/", {
                 method: "PUT",
                 headers: {

@@ -48,8 +48,7 @@ class verify extends HTMLElement{
             if (res.ok) 
             {
                 const data = await res.json();
-                document.cookie = `refresh=${data.refresh}; path=/; SameSite=None; Secure`;
-                document.cookie = `access=${data.access}; path=/; SameSite=None; Secure`;
+                // Backend already sets access_token and refresh_token cookies
                 document.cookie = `username=${data.username}; path=/; SameSite=None; Secure`;
                 document.cookie = `language=${data.language}; path=/; Secure; SameSite=Lax`;
                 window.location.hash = "#dashboard";

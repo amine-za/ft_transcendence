@@ -22,6 +22,8 @@ def set_token_cookies(response, refresh_token, access_token):
     response.set_cookie(
         key='access_token',
         value=access_token,
+        httponly=False,  # JavaScript needs to read this for Authorization headers
+        secure=True,
         samesite='None',
     )
 

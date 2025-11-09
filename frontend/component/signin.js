@@ -70,8 +70,7 @@ class signin extends HTMLElement{
                 } 
                 else 
                 {
-                    document.cookie = `refresh=${data.refresh}; path=/; SameSite=None; Secure`;
-                    document.cookie = `access=${data.access}; path=/; SameSite=None; Secure`;
+                    // Backend already sets access_token and refresh_token cookies
                     document.cookie = `language=${data.language}; path=/; Secure; SameSite=Lax`;
                     changeLanguage(data.language);
                     window.location.hash = "#dashboard";
