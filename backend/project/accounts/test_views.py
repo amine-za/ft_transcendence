@@ -28,7 +28,7 @@ class TestAuthentication:
             'email': 'newuser@example.com',
             'password': 'newpass123'
         })
-        assert response.status_code == 200
+        assert response.status_code == 201  # Changed from 200 to 201 (Created)
         assert User.objects.filter(username='newuser').exists()
 
     def test_login(self, api_client, test_user):

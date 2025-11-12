@@ -43,8 +43,8 @@ up:
 	@echo "$(BOLD)$(GREEN)╚═══════════════════════════════════════════════════════════════════════════╝$(RESET)"
 	@echo ""
 	@echo "$(YELLOW)  Building and starting services...$(RESET)"
-	@cp .env.example .env
-	@python3 -c "import secrets; f=open('.env','r+'); c=f.read(); f.seek(0); f.write(c.replace('auto-generated-by-make-up', secrets.token_urlsafe(50))); f.truncate()" || python -c "import secrets; f=open('.env','r+'); c=f.read(); f.seek(0); f.write(c.replace('auto-generated-by-make-up', secrets.token_urlsafe(50))); f.truncate()" || true
+	@if [ ! -f .env ]; then cp .env.example .env; fi
+	@python3 -c "import secrets; f=open('.env','r+'); c=f.read(); f.seek(0); f.write(c.replace('your_secret_key_here_min_50_chars', secrets.token_urlsafe(50))); f.truncate()" 2>/dev/null || python -c "import secrets; f=open('.env','r+'); c=f.read(); f.seek(0); f.write(c.replace('your_secret_key_here_min_50_chars', secrets.token_urlsafe(50))); f.truncate()" 2>/dev/null || true
 	@docker-compose up --build -d
 	@echo "$(GREEN) ft_transcendence started successfully!$(RESET)"
 	@echo "$(CYAN) Frontend: https://localhost:443$(RESET)"

@@ -24,13 +24,11 @@ class TestOAuth42:
     @patch('oauth42.views.requests.get')
     def test_login42_redir_creates_new_user(self, mock_get, mock_post, api_client):
         """Test OAuth callback creates new user"""
-        # Mock token exchange
         mock_post.return_value = MagicMock(
             status_code=200,
             json=lambda: {'access_token': 'fake_token'}
         )
         
-        # Mock user info from 42 API
         mock_get.return_value = MagicMock(
             status_code=200,
             json=lambda: {
@@ -39,11 +37,9 @@ class TestOAuth42:
             }
         )
         
-        # Call the OAuth callback with a fake code
         response = api_client.get('/login42_redir/?code=fake_code')
         
         assert response.status_code == 302  # Redirect
-        # Verify user was created
         assert User.objects.filter(username='oauth_user').exists()
         user = User.objects.get(username='oauth_user')
         assert user.email == 'oauth@42.fr'
@@ -60,14 +56,12 @@ class TestOAuth42:
     @patch('oauth42.views.requests.get')
     def test_login42_redir_existing_user(self, mock_get, mock_post, api_client):
         """Test OAuth callback with existing user"""
-        # Create user first
         User.objects.create_user(
             username='existing_oauth_user',
             email='existing@42.fr',
             password='somepass'
         )
         
-        # Mock responses
         mock_post.return_value = MagicMock(
             status_code=200,
             json=lambda: {'access_token': 'fake_token'}
@@ -80,11 +74,9 @@ class TestOAuth42:
             }
         )
         
-        # Initial user count
         initial_count = User.objects.count()
         
         response = api_client.get('/login42_redir/?code=fake_code')
         
         assert response.status_code == 302
-        # No new user created
         assert User.objects.count() == initial_count

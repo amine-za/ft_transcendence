@@ -2,10 +2,6 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-
-
-################################################
-
 from .serializers import UserSerializer
 from .models import User
 from rest_framework import status
@@ -22,28 +18,35 @@ def set_token_cookies(response, refresh_token, access_token):
     response.set_cookie(
         key='access_token',
         value=access_token,
-        httponly=False,  # JavaScript needs to read this for Authorization headers
+        httponly=False,
         secure=True,
         samesite='None',
     )
 
 @api_view(['POST'])
 def login(req):
-    user = get_object_or_404(User, username=req.data['username'])
-    if not user.check_password(req.data['password']):
-        return Response({"detail": "Wrong Password !"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+    username = req.data.get('username')
+    password = req.data.get('password')
     
-    # Check if user has 2FA enabled
+    if not username or not password:
+        return Response({"detail": "Username and password are required"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    if not user.check_password(password):
+        return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+    
     if user.two_factor_enabled:
-        # Password is correct, send OTP and wait for verification
         from twofa.views import send_otp
-        send_otp(username=req.data['username'])
+        send_otp(username=username)
         return Response({
             "requires_2fa": True,
             "message": "Verification code sent to your email"
         }, status=status.HTTP_200_OK)
     
-    # No 2FA - proceed with normal login
     serializer = UserSerializer(instance=user)
     refresh = RefreshToken.for_user(user)
     response = Response({
@@ -57,20 +60,28 @@ def login(req):
 
 @api_view(['POST'])
 def signup(req):
-    if User.objects.filter(username=req.data['username']).exists():
+    username = req.data.get('username')
+    email = req.data.get('email')
+    password = req.data.get('password')
+    
+    if not username or not email or not password:
+        return Response({"error": "Username, email, and password are required"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    if User.objects.filter(username=username).exists():
         return Response({"error": "Username already taken"}, status=status.HTTP_400_BAD_REQUEST)
-    if User.objects.filter(email=req.data['email']).exists():
+    if User.objects.filter(email=email).exists():
         return Response({"error": "Email already taken"}, status=status.HTTP_400_BAD_REQUEST)
+    
     serializer = UserSerializer(data=req.data)
     if serializer.is_valid():
         serializer.save()
-        user = User.objects.get(username=req.data['username'])
+        user = User.objects.get(username=username)
         user.language = "en"
-        user.two_factor_enabled = False  # User can enable 2FA later
-        user.set_password(req.data['password'])
+        user.two_factor_enabled = False
+        user.set_password(password)
         user.save()
-        return Response({"user": serializer.data})
-    return Response(serializer.errors)
+        return Response({"user": serializer.data}, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 def logout(req):
@@ -83,11 +94,10 @@ def logout(req):
         response.delete_cookie('access_token')
         response.delete_cookie('refresh_token')
         response.delete_cookie('username')
-        for cookie in req.COOKIES.keys():
-            response.delete_cookie(cookie)
+        response.delete_cookie('language')
         return response
     except Exception as e:
-        return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"detail": "Logout failed"}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -97,7 +107,6 @@ def check_token(req):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def lang(req):
-    # Get authenticated user from JWT token
     user = req.user
     updated_language = req.data.get('language')
 
@@ -117,7 +126,6 @@ def lang(req):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def set_2fa_status(req):
-    # Get authenticated user from JWT token
     user = req.user
     new_value = req.data.get('two_factor_enabled')
 
@@ -132,6 +140,5 @@ def set_2fa_status(req):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_2fa_status(req):
-    # Get authenticated user from JWT token
     user = req.user
     return Response({"two_factor_enabled": user.two_factor_enabled}, status=status.HTTP_200_OK)
