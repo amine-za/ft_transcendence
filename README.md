@@ -30,17 +30,17 @@ A web-based multiplayer Pong game. Frontend uses HTML, CSS, and JavaScript. Back
 
 ---
 
-## 🛠️ Chosen Modules
+## Chosen Modules
 
-### 🧩 Major Modules
+### Major Modules
 
 - **Framework Backend (Django)**: Scalable server-side solution.
-- **Remote Authentication (OAuth 2.0 with 42)**: Secure login via 42’s OAuth 2.0.
+- **Remote Authentication (OAuth 2.0 with 42)**: Secure login via 42's OAuth 2.0.
 - **Two-Factor Authentication (2FA) & JWT**: Enhanced security via 2FA (SMS/app/email) and JWT.
-- **Multiple Players**: >2 players in a single game (e.g., 4-player squared board).
+- **Multiple Players**: More than 2 players in a single game (e.g., 4-player squared board).
 - **AI Opponent**: Simulates human play, uses power-ups (no A* algorithm).
 
-### 🧱 Minor Modules
+### Minor Modules
 
 - **Database (PostgreSQL)**: Reliable data storage.
 - **Front-End Framework (Bootstrap)**: Responsive UI.
@@ -56,9 +56,7 @@ A web-based multiplayer Pong game. Frontend uses HTML, CSS, and JavaScript. Back
 - Docker Compose
 - Make (optional, for easier commands)
 
-### Quick Start (Basic Mode)
-
-This runs the app without email features. Good for testing.
+### Quick Start
 
 1. Clone the repository:
 ```bash
@@ -73,44 +71,64 @@ make up
 
 Or without Make:
 ```bash
-cp .env.example .env
-docker-compose up --build
+docker compose up --build
 ```
 
 3. Open your browser and go to: https://localhost:443
 
 Note: You will see a security warning because of the self-signed certificate. Click "Advanced" and "Proceed to localhost" to continue.
 
-### Full Setup (With Email 2FA)
-
-If you want Two-Factor Authentication via email to work:
-
-1. After running `make up`, edit the `.env` file:
-```bash
-EMAIL_HOST_USER=your_gmail@gmail.com
-EMAIL_HOST_PASSWORD=your_gmail_app_password
-```
-
-2. Get a Gmail App Password:
-   - Go to your Google Account settings
-   - Enable 2-Step Verification
-   - Generate an App Password for "Mail"
-   - Use that password in `.env`
-
-3. Restart the containers:
-```bash
-make re
-```
+The application will work immediately with default settings. Email 2FA features will be disabled until you configure email credentials in the `.env` file.
 
 ## Project Structure
 
 ```
 ft_transcendence/
-├── docker-compose.yml     # Docker setup
-├── backend/               # Django API
-├── frontend/              # HTML/CSS/JS files
-└── images/                # Screenshots
+├── .env.example           # Environment variables template
+├── .env                   # Your configuration (auto-created, gitignored)
+├── docker-compose.yml     # Docker services configuration
+├── Makefile               # Build automation
+├── backend/               # Django REST API
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   └── project/
+│       ├── accounts/      # User authentication
+│       ├── oauth42/       # 42 OAuth integration
+│       ├── twofa/         # Two-factor authentication
+│       └── core/          # Django settings
+├── frontend/              # Static web files
+│   ├── index.html
+│   ├── component/         # JavaScript modules
+│   ├── assets/            # JS and language files
+│   └── styles/            # CSS files
+└── images/                # Documentation screenshots
 ```
+
+## Usage Commands
+
+```bash
+make up        # Start all services
+make stop      # Stop all services
+make logs      # View application logs
+make clean     # Remove containers and volumes
+make fclean    # Complete cleanup including images
+make re        # Clean and restart
+make status    # Check container status
+```
+
+## Configuration (Optional)
+
+The application works with default settings. To enable email-based 2FA:
+
+1. Edit `.env` file after first run
+2. Set Gmail credentials:
+```
+EMAIL_HOST_USER=your_gmail@gmail.com
+EMAIL_HOST_PASSWORD=your_app_password
+```
+3. Restart: `make re`
+
+To get Gmail app password: Google Account > Security > 2-Step Verification > App passwords
 
 ## Technology Stack
 
@@ -128,6 +146,7 @@ ft_transcendence/
 - Protection against SQL injection and XSS
 - HTTPS support
 
+---
 
-Enjoy ft_transcendence! 🏓
+Enjoy ft_transcendence!
 
