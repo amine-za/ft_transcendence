@@ -1,6 +1,13 @@
 # ft_transcendence
 
-A web-based multiplayer Pong game. Frontend uses HTML, CSS, and JavaScript. Backend uses Django REST API. The app runs in Docker containers with PostgreSQL database.
+ft_transcendence is a robust Single Page Application (SPA) that re-imagines the classic Pong game as a modern competitive platform. Built with a Django backend and a Vanilla JavaScript frontend, it utilizes WebSockets (Django Channels) for low-latency real-time multiplayer gameplay. The architecture is fully containerized with Docker and enforces enterprise-grade security including JWT, 2FA, and OAuth2 (42 API)
+
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)
+![Django](https://img.shields.io/badge/Django-092E20?style=flat&logo=django&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=postgresql&logoColor=white)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-7952B3?style=flat&logo=bootstrap&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
 
 ### Screenshots
 <p align="center">
