@@ -5,45 +5,45 @@ export function getCookie(name)
     if (parts.length === 2) return parts.pop().split(';').shift();
     return null;
 }
-let access = getCookie('access');
+let access = getCookie('access_token');
 
 export async function CheckAuthenticated()
 {
     console.log('Checking authentication...');
-    const res = await fetch('https://0.0.0.0:8000/check/',
+    const res = await fetch('/check/',
     {
         method: 'GET',
+        credentials: 'include',
         headers: {
-            'Authorization': `Bearer ${access}`,
             'Content-Type': 'application/json',
         }
     });
     if (res.status === 401)
     {
-        const res = await fetch('https://0.0.0.0:8000/token-refresh/', {
-            method :"POST",
-            mode:"cors",
+        const res = await fetch('/token-refresh/', {
+            method: "POST",
+            credentials: 'include',
             headers:
             {
                 'Content-Type': 'application/json',
             },
-            "body" : JSON.stringify
+            body: JSON.stringify
             ({
-                refresh: getCookie('refresh'),
+                refresh: getCookie('refresh_token'),
             })
         });
         if (res.status === 401)
         {
             console.error('Failed to refresh token. Logging out...');
-            deleteCookie('access');
-            deleteCookie('refresh');
+            deleteCookie('access_token');
+            deleteCookie('refresh_token');
             deleteCookie('username');
             return false;
         }
         else if (res.status === 200)
         {
             const data = await res.json();
-            document.cookie = `access=${data.access}; path=/; SameSite=None; Secure`;
+            access = getCookie('access_token');
             return true;
         }
         else
@@ -60,5 +60,5 @@ export async function CheckAuthenticated()
 }
 
 export function deleteCookie(name) {
-    document.cookie = `${name}=; expires=Thu, 20 Sep 2001 00:00:00 UTC; path=/;`;
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 }

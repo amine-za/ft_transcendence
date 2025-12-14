@@ -31,19 +31,16 @@ class MultiPlayer extends HTMLElement {
     showRegistrationPopup() {
         const username = getCookie('username') || 'Guest';
         this.innerHTML = `
-        <div class="login-container">
-            <h2 data-i18n="Team Registration"></h2>
-            <div class="form-group">
-                <span data-i18n="First Team Name"></span><br>
-                <input type="text" id="team1Name">
-                <span data-i18n="Second Team Name"></span><br>
-                <input type="text" id="team2Name">
-            </div>
-            <button class="btn" id="registerTeams" data-i18n="Start Game"></button>
-        </div>
-        <div class="header">
-            <div class="content">
-                <p class="ebtn" id="username">${username}</p>
+        <div style="display: flex; justify-content: center; align-items: center; min-height: calc(100vh - 80px);">
+            <div class="login-container">
+                <h2 data-i18n="Team Registration"></h2>
+                <div class="form-group">
+                    <span data-i18n="First Team Name"></span><br>
+                    <input type="text" id="team1Name">
+                    <span data-i18n="Second Team Name"></span><br>
+                    <input type="text" id="team2Name">
+                </div>
+                <button class="btn" id="registerTeams" data-i18n="Start Game"></button>
             </div>
         </div>
         `;
@@ -81,22 +78,21 @@ class MultiPlayer extends HTMLElement {
     renderGame() {
         const username = getCookie('username') || 'Guest';
         this.innerHTML = `
-            <div id="gameArea">
-                <div class="score-container" id="scoreBoard">
-                    <span class="btn" id="team1Score" style="color:red">${this.teamNames[0]}: 0</span> |
-                    <span class="btn" id="team2Score" style="color:blue">${this.teamNames[1]}: 0</span>
-                </div>
-                <canvas id="pongCanvas" width="${this.gameSize}" height="${this.gameSize}"></canvas>
-                <div id="controls">
-                    <p data-i18n="Controls:"></p>
-                    <p data-i18n="Player 1 (Left): Q (up), A (down)"></p>
-                    <p data-i18n="Player 2 (Right): P (up), L (down)"></p>
-                    <p data-i18n="Player 3 (Top): R (left), T (right)"></p>
-                    <p data-i18n="Player 4 (Bottom): U (left), O (right)"></p>
-                </div>
-                <div class="header">
-                    <div class="content">
-                        <p class="ebtn" id="username">${username}</p>
+            <div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; box-sizing: border-box;">
+                <div style="display: flex; gap: 30px; align-items: center; width: 100%; max-width: 1400px;">
+                    <div id="controls">
+                        <p data-i18n="Controls:"></p>
+                        <p data-i18n="Player 1 (Left): Q (up), A (down)"></p>
+                        <p data-i18n="Player 2 (Right): P (up), L (down)"></p>
+                        <p data-i18n="Player 3 (Top): R (left), T (right)"></p>
+                        <p data-i18n="Player 4 (Bottom): U (left), O (right)"></p>
+                    </div>
+                    <div id="gameArea">
+                        <div class="score-container" id="scoreBoard">
+                            <span class="btn" id="team1Score" style="color:red">${this.teamNames[0]}: 0</span> |
+                            <span class="btn" id="team2Score" style="color:blue">${this.teamNames[1]}: 0</span>
+                        </div>
+                        <canvas id="pongCanvas" width="${this.gameSize}" height="${this.gameSize}"></canvas>
                     </div>
                 </div>
             </div>
@@ -163,44 +159,34 @@ class MultiPlayer extends HTMLElement {
         }
 
         // Check wall collisions (including corner bounce zones)
-        this.checkWallCollision(this.ball.x + this.ball.dx, this.ball.y + this.ball.dy);
+        this.checkWallCollision();
     }
 
-    checkWallCollision(nextX, nextY) {
-        const cornerZone = this.cornerBounceZone;  // 10% of the game size
+    checkWallCollision() {
+        const x = this.ball.x;
+        const y = this.ball.y;
 
-        // Left and right boundary collisions
-        if (nextX - this.ball.radius <= 0) {
-            if (nextY <= cornerZone || nextY >= this.gameSize - cornerZone) {
-                this.ball.dx = Math.abs(this.ball.dx);  // Left bounce
-            } else {
-                this.teamScores[1]++;
-                this.resetBall();
-            }
-        } else if (nextX + this.ball.radius >= this.gameSize) {
-            if (nextY <= cornerZone || nextY >= this.gameSize - cornerZone) {
-                this.ball.dx = -Math.abs(this.ball.dx);  // Right bounce
-            } else {
-                this.teamScores[0]++;
-                this.resetBall();
-            }
-        }
+        // Detect which boundaries the ball has crossed
+        const hitLeft = x - this.ball.radius <= 0;
+        const hitRight = x + this.ball.radius >= this.gameSize;
+        const hitTop = y - this.ball.radius <= 0;
+        const hitBottom = y + this.ball.radius >= this.gameSize;
 
-        // Top and bottom boundary collisions
-        if (nextY - this.ball.radius <= 0) {
-            if (nextX <= cornerZone || nextX >= this.gameSize - cornerZone) {
-                this.ball.dy = Math.abs(this.ball.dy);  // Top bounce
-            } else {
-                this.teamScores[1]++;
-                this.resetBall();
+        // If ball hits any edge, it's a loss - no corner bounces
+        if (hitLeft || hitRight || hitTop || hitBottom) {
+            // Determine which team scores based on which edge was hit
+            if (hitLeft) {
+                this.teamScores[1]++;  // Blue team scores (left paddle failed)
+            } else if (hitRight) {
+                this.teamScores[0]++;  // Red team scores (right paddle failed)
+            } else if (hitTop) {
+                this.teamScores[1]++;  // Blue team scores (top paddle failed)
+            } else if (hitBottom) {
+                this.teamScores[0]++;  // Red team scores (bottom paddle failed)
             }
-        } else if (nextY + this.ball.radius >= this.gameSize) {
-            if (nextX <= cornerZone || nextX >= this.gameSize - cornerZone) {
-                this.ball.dy = -Math.abs(this.ball.dy);  // Bottom bounce
-            } else {
-                this.teamScores[0]++;
-                this.resetBall();
-            }
+            
+            this.updateScoreDisplay();
+            this.resetBall();
         }
     }
 
@@ -306,15 +292,12 @@ class MultiPlayer extends HTMLElement {
         this.innerHTML = `
             <div class="login-container">
                 <h2 class="login-title" data-i18n="Game Over"></h2>
-                <span class="word"> ${this.teamNames[winnerIndex]} </span>
-                <span class="word" data-i18n=" wins!"></span><br>
-                <button class="btn" id="restartGame" data-i18n="Play Again"></button>
-                <button class="btn" id="returnToDashboard" data-i18n="Return to Dashboard"></button>
-            </div>
-            <div class="header">
-                <div class="content">
-                    <p class="ebtn" id="username">${username}</p>
+                <div style="margin: 20px 0;">
+                    <span class="word"> ${this.teamNames[winnerIndex]} </span>
+                    <span class="word" data-i18n=" wins!"></span>
                 </div>
+                <button class="btn" id="restartGame" data-i18n="Play Again" style="margin: 10px;">Play Again</button>
+                <button class="btn" id="returnToDashboard" data-i18n="Return to Dashboard" style="margin: 10px;">Return to Dashboard</button>
             </div>
         `;
         changeLanguage(localStorage.getItem('preferredLanguage') || 'en');

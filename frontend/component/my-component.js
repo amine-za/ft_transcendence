@@ -13,14 +13,14 @@ function getCookie(name)
 
 function isAuthenticated() 
 {
-    const token = getCookie('access');
+    const token = getCookie('access_token');
     return token !== null;
 }
 
 
 async function navigate(){
     await CheckAuthenticated();
-    let refresh = getCookie('refresh');
+    let refresh = getCookie('refresh_token');
     const path = window.location.hash.substring(1);
     const page = route[path];
     const container = document.getElementById('container');
@@ -32,7 +32,7 @@ async function navigate(){
     else if (page !== "signup-component" && page !== "signin-component" && page !== "home-component" && page !== "verify-component")
     {
         await CheckAuthenticated();
-        refresh = getCookie('refresh');
+        refresh = getCookie('refresh_token');
         if (isAuthenticated() && refresh !== null)
             container.innerHTML = `<${page}></${page}>`;
         else

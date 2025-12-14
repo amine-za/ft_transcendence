@@ -1,179 +1,249 @@
-.main-container{
-  width: 99.9vw;
-  height: 92.9vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  
-}
-.dashboard{
-  display: flex;
-  flex-direction: column;
-  height: 50%;
-  width: 50%;
-  gap: 10%;
-  margin-bottom: 20em;
-}
-.elements{
-  background-image: url('../img/output.png');
-  border-radius: 15px;
-  height: 100%;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap : 8%;
-  animation: fadeIn 0.8s ease ;
-}
-
-  /* Header styling */
-  .header {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 40px;
-  }
-  
-  .username {
-    margin-left: auto;
-    margin-top: auto;
-    font-size: 2em;
-    color: #484852;
-    font-weight: bold;
-	z-index: 1;
-  }
-  
-  /* Content styling */
-  .content {
-    font-size: 1.5em;
+.main-container {
+    width: 100vw;
+    height: 100vh;
     display: flex;
     justify-content: center;
-    gap: 100px; /* Space between buttons */
-  }
-
-  .abtn{
-    background-color: #560df5;
-    padding: 10px 30px;
-    color: black;
-    text-decoration: none;
-    border: none;
-  }
-  .ebtn{
-    background-color: #560df5;
-    padding: 10px 30px;
-    color: black;
-    text-decoration: none;
-    border: none;
-    /* position: absolute; Use absolute positioning */
-    /* top: 10px; Distance from the top */
-    /* right: 40em; */
-  }
-
-  select {
-    background-color: black;
-    color: white;
-    border: 1px solid white;
-    padding: 8px;
-    font-size: 16px;
-    border-radius: 5px;
-    outline: none;
-    cursor: pointer;
+    align-items: center;
+    padding-top: 80px; /* Account for fixed navbar */
 }
 
-option {
-    background-color: black;
-    color: white;
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    height: 50%;
+    width: 80%;
+    max-width: 1200px;
+    justify-content: center;
+    align-items: center;
 }
 
-/* Change color when hovering over the select dropdown */
-select:hover {
-    background-color: white;
-    color: black;
+.elements {
+    background-image: url('../img/output.png');
+    border-radius: 15px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2%;
+    padding: 20px;
+    animation: fadeIn 0.8s ease;
 }
 
-/* Styling for the placeholder option */
-option[value=""] {
-    color: grey;
+/* Navbar specific styles */
+.navbar-brand {
+    margin-left: 0;
+    font-size: 1.8rem !important;
 }
 
-  /* Button styling */
-  .btn {
+.navbar-text {
+    font-size: 1.1rem;
+    padding: 0 10px;
+}
+
+/* Dropdown menu styling */
+.dropdown-menu {
+    background-color: #1a1a1a;
+    border: 1px solid #444;
+}
+
+.dropdown-item {
+    color: #fff;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #333;
+    color: #fff;
+}
+
+/* Button styling for dashboard */
+.btn {
     display: inline-block;
     padding: 15px 30px;
     background-color: rgba(0, 0, 0, 0.7);
     color: #fff;
-    font-size: 1.6em;
+    font-size: 1.4em;
     font-weight: bold;
     border-radius: 8px;
     text-decoration: none;
     transition: background-color 0.3s ease, transform 0.2s;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-	  z-index: 1;
-  }
-  
-  .btn:hover {
+    z-index: 1;
+    min-width: 180px;
+    text-align: center;
+}
+
+.btn:hover {
     background-color: #878787;
     transform: translateY(-3px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-  }
-  .ebtn:hover {
-    background-color: hsl(0, 0%, 100%);
-    transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-  }
-  .abtn:hover {
-    background-color: #ffff;
-    transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-  }
+    color: #fff;
+    text-decoration: none;
+}
 
-  
-  /* Responsive Design */
-  @media (max-width: 480px) {
-    .main-container {
-      width: 90%;
-      padding: 20px;
+/* Navbar button overrides */
+.navbar .btn-sm {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+}
+
+.navbar .btn-outline-light:hover {
+    transform: none;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
     }
-  
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .navbar-nav {
+        margin-top: 15px;
+    }
+
+    .navbar-nav .nav-item {
+        margin: 5px 0;
+    }
+
+    .navbar .btn-sm {
+        width: 100%;
+        margin: 5px 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard {
+        width: 90%;
+        height: 60%;
+    }
+
+    .elements {
+        gap: 3%;
+        padding: 15px;
+    }
+
     .btn {
-      width: 100%;
-      padding: 12px;
-      font-size: 1em;
+        font-size: 1.2em;
+        padding: 12px 20px;
+        min-width: 150px;
     }
-    .abtn {
-      width: 100%;
-      padding: 12px;
-      font-size: 1em;
+
+    .navbar-brand {
+        font-size: 1.5rem !important;
     }
-    .ebtn {
-      width: 100%;
-      padding: 12px;
-      font-size: 1em;
+}
+
+@media (max-width: 480px) {
+    .main-container {
+        padding-top: 70px;
     }
-  }
-  
-.word
-{
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 35px;
-  color: #ffffff;
-  background-color: #000000;
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 15px;
+
+    .dashboard {
+        width: 95%;
+        height: 70%;
+    }
+
+    .elements {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .btn {
+        width: 100%;
+        font-size: 1.1em;
+        padding: 12px;
+        min-width: auto;
+    }
+
+    .navbar-brand {
+        font-size: 1.3rem !important;
+    }
+}
+
+/* Game content wrapper - centers all game pages */
+.game-content {
+    width: 100%;
+    min-height: calc(100vh - 80px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#gameArea {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#gameArea canvas {
+    max-width: 90vw;
+    max-height: 70vh;
+    width: 800px;
+    height: 800px;
+    object-fit: contain;
+    display: block;
+}
+
+/* Tournament and game specific styles */
+.word {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1.5em;
+    color: #ffffff;
+    background-color: #000000;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
 }
 
 .player-info {
-  margin-bottom: 10px;
-  font-weight: bold;
-  margin-left: 5px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 35px;
-  color: #ffffff;
-  background-color: #000000;
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 15px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    margin-left: 5px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1.5em;
+    color: #ffffff;
+    background-color: #000000;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+/* Controls styling for multiplayer */
+#controls {
+    color: #fff;
+    text-align: left;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+    min-width: 250px;
+    flex-shrink: 0;
+}
+
+#controls p {
+    margin: 8px 0;
+    font-size: 1em;
+    white-space: nowrap;
+}
+
+#controls p:first-child {
+    font-weight: bold;
+    font-size: 1.2em;
+    margin-bottom: 15px;
 }

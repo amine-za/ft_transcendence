@@ -1,5 +1,6 @@
 import { getCookie} from "./func.js";
 import { changeLanguage } from "../assets/js/script.js";
+
 class AiComponent extends HTMLElement {
     constructor() {
         super();
@@ -13,8 +14,8 @@ class AiComponent extends HTMLElement {
             dy: 5,
             speed: 5
         };
-        this.paddle1 = { x: 10, y: 200, width: 10, height: 120 };  // Player
-        this.paddle2 = { x: 980, y: 200, width: 10, height: 120 }; // AI
+        this.paddle1 = { x: 10, y: 200, width: 10, height: 120 };
+        this.paddle2 = { x: 980, y: 200, width: 10, height: 120 };
         this.keys = {};
         this.paddleSpeed = 14;
         this.score1 = 0;
@@ -23,7 +24,7 @@ class AiComponent extends HTMLElement {
         this.gameStarted = false;
         this.lastAIUpdate = 0;
         this.predictedBallY = 250;
-        this.difficultyLevel = 0.65;  // Reduced from 0.85 to 0.65 (65% accuracy)
+        this.difficultyLevel = 0.65;
         this.hitCount = 0;
     }
 
@@ -32,19 +33,17 @@ class AiComponent extends HTMLElement {
     }
 
     showPlayerRegistration() {
-        const username = getCookie('username') || 'Guest';
         this.innerHTML = `
-            <div class="login-container">
-                <h2 data-i18n="Player Registration"></h2>
-                <div class="form-group">
-                    <span data-i18n="Enter Your Name:"></span>
-                    <input type="text" id="playerName">
+            <div class="game-content">
+                <div class="login-container">
+                    <h2 data-i18n="Player Registration">Player Registration</h2>
+                    <div class="form-group">
+                        <span data-i18n="Enter Your Name:">Enter Your Name:</span>
+                        <input type="text" id="playerName">
+                    </div>
+                    <button class="btn" id="startGame" data-i18n="Start Game">Start Game</button>
                 </div>
-                <button class="btn" id="startGame" data-i18n="Start Game"></button>
             </div>
-            <div class="header">
-            <div class="content">
-                <p class="ebtn" id="username">${username}</p>
         `;
         changeLanguage(localStorage.getItem('preferredLanguage') || 'en');
         this.querySelector('#startGame').addEventListener('click', () => {
@@ -60,18 +59,16 @@ class AiComponent extends HTMLElement {
     }
 
     initializeGame() {
-        const username = getCookie('username') || 'Guest';
         this.innerHTML = `
-            <div id="gameArea">
-                <div class="score-container" id="scoreBoard">
-                    <span class="btn" id="player1Score">${this.playerName}: 0</span> -
-                    <span class="btn" id="player2Score">AI: 0</span>
+            <div class="game-content">
+                <div id="gameArea">
+                    <div class="score-container" id="scoreBoard">
+                        <span class="btn" id="player1Score">${this.playerName}: 0</span> -
+                        <span class="btn" id="player2Score">AI: 0</span>
+                    </div>
+                    <canvas id="pongCanvas" width="1000" height="500"></canvas>
                 </div>
-                <canvas id="pongCanvas" width="1000" height="500"></canvas>
             </div>
-            <div class="header">
-            <div class="content">
-                <button class="ebtn" id="username">${username}</button>
         `;
 
         this.canvas = this.querySelector('#pongCanvas');
@@ -94,24 +91,19 @@ class AiComponent extends HTMLElement {
 
     updateAI() {
         const now = Date.now();
-        // Increased delay between AI updates to 1.5 seconds
         if (now - this.lastAIUpdate >= 1500) {
             this.predictBallPosition();
             this.lastAIUpdate = now;
         }
 
-        // Move paddle towards predicted position with more human-like constraints
         const paddleCenter = this.paddle2.y + this.paddle2.height / 2;
         const targetY = this.predictedBallY;
 
-        // Increased random error for less accuracy
         const randomError = (Math.random() - 0.5) * 100 * (1 - this.difficultyLevel);
         const adjustedTargetY = targetY + randomError;
 
-        // Slower paddle speed for AI
         const aiPaddleSpeed = this.paddleSpeed * 0.8;
 
-        // Larger dead zone for more human-like behavior
         if (Math.abs(paddleCenter - adjustedTargetY) > 30) {
             if (paddleCenter < adjustedTargetY && this.paddle2.y < this.canvas.height - this.paddle2.height) {
                 this.paddle2.y += aiPaddleSpeed;
@@ -122,21 +114,17 @@ class AiComponent extends HTMLElement {
     }
 
     predictBallPosition() {
-        // Only predict when ball is moving towards AI and is in AI's half
         if (this.ball.dx > 0 && this.ball.x > this.canvas.width / 2) {
             let futureX = this.ball.x;
             let futureY = this.ball.y;
             let futureDy = this.ball.dy;
             
-            // Add more randomness to prediction
             const predictionError = (Math.random() - 0.5) * 50;
             
-            // Simulate ball path with less accuracy
             while (futureX < this.paddle2.x) {
                 futureX += this.ball.dx;
                 futureY += futureDy;
                 
-                // Simulate bounces off top and bottom
                 if (futureY < 0 || futureY > this.canvas.height) {
                     futureDy *= -1;
                 }
@@ -147,7 +135,6 @@ class AiComponent extends HTMLElement {
     }
 
     update() {
-        // Update player paddle
         if (this.keys['w'] && this.paddle1.y > 0) {
             this.paddle1.y -= this.paddleSpeed;
         }
@@ -155,14 +142,11 @@ class AiComponent extends HTMLElement {
             this.paddle1.y += this.paddleSpeed;
         }
 
-        // Update AI paddle
         this.updateAI();
 
-        // Move ball
         this.ball.x += this.ball.dx;
         this.ball.y += this.ball.dy;
 
-        // Ball collision with top and bottom walls
         if (this.ball.y - this.ball.radius < 0) {
             this.ball.y = this.ball.radius;
             this.ball.dy *= -1;
@@ -171,9 +155,8 @@ class AiComponent extends HTMLElement {
             this.ball.dy *= -1;
         }
 
-        // Check paddle collisions
         if (this.checkPaddleCollision(this.ball, this.paddle1)) {
-            this.ball.x = this.paddle1.x + this.paddle1.width + this.ball.radius; // Prevent sticking
+            this.ball.x = this.paddle1.x + this.paddle1.width + this.ball.radius;
             this.handlePaddleCollision(this.ball, this.paddle1);
             this.hitCount++;
             if (this.hitCount % 4 === 0 && Math.abs(this.ball.dx) < 10) {
@@ -183,7 +166,7 @@ class AiComponent extends HTMLElement {
                 this.ball.dy *= (currentSpeed + speedIncrease) / currentSpeed;
             }
         } else if (this.checkPaddleCollision(this.ball, this.paddle2)) {
-            this.ball.x = this.paddle2.x - this.ball.radius; // Prevent sticking
+            this.ball.x = this.paddle2.x - this.ball.radius;
             this.handlePaddleCollision(this.ball, this.paddle2);
             this.hitCount++;
             if (this.hitCount % 4 === 0 && Math.abs(this.ball.dx) < 10) {
@@ -194,7 +177,6 @@ class AiComponent extends HTMLElement {
             }
         }
 
-        // Score points
         if (this.ball.x < 0) {
             this.score2++;
             this.resetBall();
@@ -205,7 +187,6 @@ class AiComponent extends HTMLElement {
 
         this.updateScoreDisplay();
 
-        // Check for winner
         if (this.score1 >= 5 || this.score2 >= 5) {
             this.showWinnerPopup();
         }
@@ -214,38 +195,31 @@ class AiComponent extends HTMLElement {
     resetBall() {
         this.ball.x = this.canvas.width / 2;
         this.ball.y = this.canvas.height / 2;
-        const speed = 5; // Reset to initial speed
-        const angle = (Math.random() - 0.5) * Math.PI / 4; // Random angle between -45 and 45 degrees
+        const speed = 5;
+        const angle = (Math.random() - 0.5) * Math.PI / 4;
         this.ball.dx = Math.cos(angle) * speed * (Math.random() > 0.5 ? 1 : -1);
         this.ball.dy = Math.sin(angle) * speed;
     }
 
     checkPaddleCollision(ball, paddle) {
-        // Find the closest point to the ball within the paddle
         let closestX = Math.max(paddle.x, Math.min(ball.x, paddle.x + paddle.width));
         let closestY = Math.max(paddle.y, Math.min(ball.y, paddle.y + paddle.height));
         
-        // Calculate the distance between the closest points and the ball's center
         let distanceX = ball.x - closestX;
         let distanceY = ball.y - closestY;
         
-        // Check if the distance is less than the ball's radius
         let distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
         return distanceSquared <= (ball.radius * ball.radius);
     }
 
     handlePaddleCollision(ball, paddle) {
-        // Calculate collision point relative to paddle center
         const paddleCenter = paddle.y + paddle.height / 2;
         const collisionPoint = ball.y - paddleCenter;
         const normalizedCollisionPoint = collisionPoint / (paddle.height / 2);
         
-        // Calculate new angle based on where the ball hits the paddle
-        // Maximum angle is 45 degrees (π/4 radians)
         const maxAngle = Math.PI / 4;
         const angle = normalizedCollisionPoint * maxAngle;
         
-        // Set new velocity based on angle
         const speed = Math.sqrt(ball.dx * ball.dx + ball.dy * ball.dy);
         ball.dx = Math.cos(angle) * speed * (ball.dx > 0 ? -1 : 1);
         ball.dy = Math.sin(angle) * speed;
@@ -262,23 +236,19 @@ class AiComponent extends HTMLElement {
     }
 
     draw() {
-        // Clear canvas
         this.ctx.fillStyle = 'black';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // Draw center line
         this.ctx.strokeStyle = 'white';
         this.ctx.beginPath();
         this.ctx.moveTo(this.canvas.width / 2, 0);
         this.ctx.lineTo(this.canvas.width / 2, this.canvas.height);
         this.ctx.stroke();
 
-        // Draw paddles
         this.ctx.fillStyle = 'white';
         this.ctx.fillRect(this.paddle1.x, this.paddle1.y, this.paddle1.width, this.paddle1.height);
         this.ctx.fillRect(this.paddle2.x, this.paddle2.y, this.paddle2.width, this.paddle2.height);
 
-        // Draw ball
         this.ctx.beginPath();
         this.ctx.arc(this.ball.x, this.ball.y, this.ball.radius, 0, Math.PI * 2);
         this.ctx.fill();
@@ -295,18 +265,18 @@ class AiComponent extends HTMLElement {
     showWinnerPopup() {
         this.gameStarted = false;
         const winner = this.score1 >= 5 ? this.playerName : 'AI';
-        const username = getCookie('username') || 'Guest';
         this.innerHTML = `
-            <div class="login-container">
-                <h2 class="login-title" data-i18n="Game Over"></h2>
-                <span class="word">${winner}</span>
-                <span class="word" data-i18n=" wins!"></span><br>
-                <button class="btn" id="restartGame" data-i18n="Play Again"></button>
-                <button class="btn" id="returnToDashboard" data-i18n="Return to Dashboard"></button>
+            <div class="game-content">
+                <div class="login-container">
+                    <h2 class="login-title" data-i18n="Game Over">Game Over</h2>
+                    <div style="margin: 20px 0;">
+                        <span class="word">${winner}</span>
+                        <span class="word" data-i18n=" wins!"> wins!</span>
+                    </div>
+                    <button class="btn" id="restartGame" data-i18n="Play Again" style="margin: 10px;">Play Again</button>
+                    <button class="btn" id="returnToDashboard" data-i18n="Return to Dashboard" style="margin: 10px;">Return to Dashboard</button>
+                </div>
             </div>
-            <div class="header">
-            <div class="content">
-                <button class="ebtn" id="username">${username}</button>
         `;
         changeLanguage(localStorage.getItem('preferredLanguage') || 'en');
         this.querySelector('#restartGame').addEventListener('click', () => {
